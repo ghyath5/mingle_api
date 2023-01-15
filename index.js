@@ -8,12 +8,7 @@ cron.schedule('*/6 * * * *', async () => {
     console.log('running a task every minute');
     axios.get('https://yeetalk.herokuapp.com/').then(() => { }).catch(() => { })
     try {
-        await rate_online_users(1)
-    } catch (e) {
-        console.log(e);
-    }
-    try {
-        await vote_whos_online(1)
+        await Promise.all([rate_online_users(1), vote_whos_online(1)])
     } catch (e) {
         console.log(e);
     }
