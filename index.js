@@ -5,7 +5,7 @@ var cron = require('node-cron');
 
 cron.schedule('*/6 * * * *', async () => {
     console.log('running a task every minute');
-    axios
+    axios.get('https://yeetalk.herokuapp.com/').then(() => { }).catch(() => { })
     try {
         await rate_online_users(1)
     } catch (e) {
