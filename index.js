@@ -4,7 +4,7 @@ const { default: axios } = require("axios");
 var cron = require('node-cron');
 const express = require('express')
 const app = express()
-cron.schedule('*/16 * * * *', async () => {
+cron.schedule('*/11 * * * *', async () => {
     console.log('running a task every minute');
     axios.get('https://yeetalk.herokuapp.com/').then(() => { }).catch(() => { })
     try {
