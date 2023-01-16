@@ -5,7 +5,6 @@ var cron = require('node-cron');
 const express = require('express')
 const app = express()
 cron.schedule('* * * * *', async () => {
-    axios.get('https://mingle-api2.herokuapp.com/').then(() => { }).catch(() => { })
     try {
         await rate_users()
     } catch (e) {
@@ -15,7 +14,7 @@ cron.schedule('* * * * *', async () => {
 cron.schedule('*/4 * * * *', async () => {
     axios.get('https://mingle-api2.herokuapp.com/').then(() => { }).catch(() => { })
     try {
-        await vote_new_members()
+        // await vote_new_members()
     } catch (e) {
         console.log(e);
     }
