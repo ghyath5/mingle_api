@@ -74,17 +74,15 @@ module.exports.whos_online = async (page = 1) => {
 module.exports.new_members = async () => {
     const endpoint = '/v5/new_members'
     const actionToken = this.generateActionToken(endpoint, [])
-    console.log(actionToken);
-    const res = await this.request(endpoint, {
+    const users = await this.request(endpoint, {
         method: 'get',
         actionToken
     })
-    return res.map(user => user.id)
+    return users
 }
 module.exports.vote = async (id) => {
     const endpoint = `/v5/public_users/${id}/vote`
     const actionToken = this.generateActionToken(endpoint, [])
-    console.log(id);
     const res = await this.request(endpoint, {
         method: 'post',
         actionToken
@@ -92,9 +90,10 @@ module.exports.vote = async (id) => {
     console.log(res);
 }
 module.exports.vote_new_members = async () => {
-    const newMembersIDs = await this.new_members()
-    for (const memberID of newMembersIDs) {
-        await this.vote(memberID)
+    const newMembers = await this.new_members()
+    for (const member of newMembers) {
+        console.log(member.name, member.location);
+        await this.vote(member.id)
         await this.sleep(Math.random() * 1300 + 1000)
     }
 }
@@ -109,7 +108,7 @@ module.exports.vote_whos_online = async (startPage = 1) => {
     // if (meta.page_size && meta.total_pages && (startPage * Number(meta.page_size) < Number(meta.total_pages))) {
     //     return this.vote_whos_online(startPage += 1)
     // }
-    if (startPage <= 8) {
+    if (startPage <= 10) {
         return this.vote_whos_online(startPage += 1)
     }
 }

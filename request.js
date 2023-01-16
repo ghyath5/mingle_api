@@ -57,6 +57,7 @@ module.exports.rate = async (id) => {
     const res = await this.request('/api/v2/mutual_match/rate_only', {
         method: 'post',
         data: {
+            "from_page": "find_match",
             "match_user_id": id,
             "rating": "Y",
         }
@@ -77,6 +78,16 @@ module.exports.whos_online = async (page = 1) => {
     })
     const onlineUsers = res.search.map(u => u.user)
     return onlineUsers;
+}
+module.exports.mutual_match_users = async () => {
+    const endpoint = '/api/v2/mutual_match/first_batch_next_match_users'
+    const actionToken = this.generateActionToken(endpoint, [this.separatorAction])
+    const res = await this.request(endpoint, {
+        method: 'get',
+        actionToken
+    })
+    const users = res.mutual_match
+    return users;
 }
 
 module.exports.who_is_interested_in_me = async (page = 1) => {
@@ -100,16 +111,15 @@ module.exports.rate_online_users = async (startPage = 1) => {
         await this.rate(onlineUser.id)
         await this.sleep(Math.random() * 1300 + 1000)
     }
-    if (startPage <= 5) {
+    if (startPage <= 10) {
         return this.rate_online_users(startPage += 1)
     }
 }
-
-module.exports.rate_interested_in_me_users = async () => {
-    const interestedInMeUsersIDs = await this.who_is_interested_in_me(1)
-    console.log(interestedInMeUsersIDs);
-    // for (const onlineUser of onlineUsers) {
-    //     await this.rate(onlineUser.id)
-    //     await this.sleep(Math.random() * 1300 + 1000)
-    // }
+module.exports.rate_users = async () => {
+    const users = await this.mutual_match_users()
+    for (const user of users) {
+        console.log(user.display_name, user.city);
+        await this.rate(user.id)
+        await this.sleep(Math.random() * 1300 + 1000)
+    }
 }
