@@ -11,14 +11,15 @@ cron.schedule('* * * * *', async () => {
         console.log(e);
     }
 });
-cron.schedule('*/4 * * * *', async () => {
+cron.schedule('*/5 * * * *', async () => {
     axios.get('https://mingle-api2.herokuapp.com/').then(() => { }).catch(() => { })
     try {
-        // await vote_new_members()
+        await vote_new_members()
     } catch (e) {
         console.log(e);
     }
 });
+
 app.get('/', (rq, rs) => {
     rs.send("refreshed")
 })

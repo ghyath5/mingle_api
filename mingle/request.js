@@ -40,7 +40,7 @@ module.exports.request = async (endpoint, { method = 'get', data = {}, actionTok
 
         )
         return response.data;
-    } catch {
+    } catch (e) {
         return {}
     }
 }
@@ -71,11 +71,16 @@ module.exports.whos_online = async (page = 1) => {
     })
     return users
 }
-module.exports.new_members = async () => {
-    const endpoint = '/v5/new_members'
-    const actionToken = this.generateActionToken(endpoint, [])
+module.exports.new_members = async (page = 1) => {
+    console.log('Members page:', page);
+    const endpoint = '/v5/feeds'
+    const actionToken = this.generateActionToken(endpoint, [page])
     const users = await this.request(endpoint, {
         method: 'get',
+        data: {
+            page,
+            interaction_info: true
+        },
         actionToken
     })
     return users
@@ -89,12 +94,16 @@ module.exports.vote = async (id) => {
     })
     console.log(res);
 }
-module.exports.vote_new_members = async () => {
-    const newMembers = await this.new_members()
+module.exports.vote_new_members = async (page = 1) => {
+    const newMembers = await this.new_members(page)
     for (const member of newMembers) {
+        if (member?.interaction_info?.liked) continue;
         console.log(member.name, member.location);
         await this.vote(member.id)
         await this.sleep(Math.random() * 1300 + 1000)
+    }
+    if (page <= 8) {
+        return this.vote_new_members(page += 1)
     }
 }
 module.exports.vote_whos_online = async (startPage = 1) => {
